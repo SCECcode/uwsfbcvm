@@ -1,6 +1,6 @@
 # Autoconf/automake file
 
-#bin_PROGRAMS = test_sfbcvm
+#bin_PROGRAMS = test_uwsfbcvm
 bin_PROGRAMS = 
 
 # General compiler/linker flags
@@ -14,10 +14,10 @@ all: $(bin_PROGRAMS)
 
 install:
 	mkdir -p ${prefix}/tests
-#	cp test_sfbcvm ${prefix}/tests
+#	cp test_uwsfbcvm ${prefix}/tests
 
-test_sfbcvm$(EXEEXT): $(objects)
-	$(CC) -o $@ $^ $(AM_CFLAGS) -L../src -lsfbcvm $(AM_LDFLAGS)
+test_uwsfbcvm$(EXEEXT): $(objects)
+	$(CC) -o $@ $^ $(AM_CFLAGS) -L../src -luwsfbcvm $(AM_LDFLAGS)
 
 $(objects): %.o: %.c
 	$(CC) -o $@ -c $^ $(AM_CFLAGS) -I../src/ $(AM_CFLAGS)

@@ -4,7 +4,7 @@
 AM_CFLAGS = ${CFLAGS} 
 AM_LDFLAGS = ${LDFLAGS}
 
-TARGETS = libsfbcvm.a libsfbcvm.so
+TARGETS = libuwsfbcvm.a libuwsfbcvm.so
 
 all: $(TARGETS)
 
@@ -12,20 +12,20 @@ install:
 	mkdir -p ${prefix}
 	mkdir -p ${prefix}/lib
 	mkdir -p ${prefix}/include
-	cp libsfbcvm.so ${prefix}/lib
-	cp libsfbcvm.a ${prefix}/lib
-	cp sfbcvm.h ${prefix}/include
+	cp libuwsfbcvm.so ${prefix}/lib
+	cp libuwsfbcvm.a ${prefix}/lib
+	cp uwsfbcvm.h ${prefix}/include
 
-libsfbcvm.a: sfbcvm_static.o 
+libuwsfbcvm.a: uwsfbcvm_static.o 
 	$(AR) rcs $@ $^
 
-libsfbcvm.so: sfbcvm.o
-	$(CC) -shared $(AM_CFLAGS) -o libsfbcvm.so $^ $(AM_LDFLAGS)
+libuwsfbcvm.so: uwsfbcvm.o
+	$(CC) -shared $(AM_CFLAGS) -o libuwsfbcvm.so $^ $(AM_LDFLAGS)
 
-sfbcvm.o: sfbcvm.c
+uwsfbcvm.o: uwsfbcvm.c
 	$(CC) -fPIC -DDYNAMIC_LIBRARY -o $@ -c $^ $(AM_CFLAGS)
 	
-sfbcvm_static.o: sfbcvm.c
+uwsfbcvm_static.o: uwsfbcvm.c
 	$(CC) -o $@ -c $^ $(AM_CFLAGS)
 	
 clean:

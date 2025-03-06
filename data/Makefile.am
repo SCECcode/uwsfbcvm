@@ -9,25 +9,25 @@ AM_FCFLAGS = ${FCFLAGS}
 AM_LDFLAGS = ${LDFLAGS}
 
 all:
-if WITH_SFBCVM_LARGEDATA_DIR
-	echo "USING WITH_SFBCVM_LARGEDATA_DIR in sfbcvm"
+if WITH_UWSFBCVM_LARGEDATA_DIR
+	echo "USING WITH_UWSFBCVM_LARGEDATA_DIR in uwsfbcvm"
 else
 	./make_data_files.py
 endif
 
 install:
-if WITH_SFBCVM_LARGEDATA_DIR
-	if [ ! -d "${prefix}/data/sfbcvm" ]; then \
+if WITH_UWSFBCVM_LARGEDATA_DIR
+	if [ ! -d "${prefix}/data/uwsfbcvm" ]; then \
 		$(MKDIR_P) ${prefix}/data; \
-		$(LN_S) -f $(SFBCVM_LARGEDATA_DIR) ${prefix}/data/sfbcvm; \
-		echo "USING WITH_SFBCVM_LARGEDATA_DIR in sfbcvm"; \
+		$(LN_S) -f $(UWSFBCVM_LARGEDATA_DIR) ${prefix}/data/uwsfbcvm; \
+		echo "USING WITH_UWSFBCVM_LARGEDATA_DIR in uwsfbcvm"; \
 	fi
 	cp config ${prefix}/data
 else
-	if [ ! -d "${prefix}/data/sfbcvm" ]; then \
+	if [ ! -d "${prefix}/data/uwsfbcvm" ]; then \
 		$(MKDIR_P) ${prefix}/data; \
-		mv sfbcvm ${prefix}/data; \
-		$(LN_S) -f ${prefix}/data/sfbcvm .; \
+		mv uwsfbcvm ${prefix}/data; \
+		$(LN_S) -f ${prefix}/data/uwsfbcvm .; \
 	fi
 	cp config ${prefix}/data
 endif

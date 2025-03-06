@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ##
-#  Builds the data files in the expected format from IV33.dat.txt
+#  Builds the data files in the expected format from 
 #
 # from >> easting(Km) northing(Km) depth(Km) vp(km/s)
 #
@@ -41,9 +41,9 @@ else:
 ##    return utm_to_wgs84_transform.TransformPoint(easting, northing, 0) 
 
 
-## at SFBCVM/SFB_Vp_Model0.txt
+## at UWSFBCVM/SFB_Vp_Model0.txt
 
-model = "SFBCVM"
+model = "UWSFBCVM"
 
 dimension_x = 0
 dimension_y = 0 
@@ -113,28 +113,12 @@ def main():
         if (variable == 'nz') :
             dimension_z = int(val)
             continue
-        if (variable == 'bottom_left_corner_lon') :
-            lon_origin = float(val)
-            continue
-        if (variable == 'bottom_left_corner_lat') :
-            lat_origin = float(val)
-            continue
-        if (variable == 'top_right_corner_lon') :
-            lon_upper = float(val)
-            continue
-        if (variable == 'top_right_corner_lat') :
-            lat_upper = float(val)
-            continue
-
         continue
     if path == "" :
         print("ERROR: failed to find variables from config file")
         sys.exit(1)
 
     fp.close()
-
-    delta_lon = (lon_upper - lon_origin )/(dimension_x-1)
-    delta_lat = (lat_upper - lat_origin)/(dimension_y-1)
 
     print("\nDownloading model file\n")
 
@@ -150,9 +134,9 @@ def main():
 
     f = open("./SFB_Vp_Model0.txt")
 
-    f_vp = open("./sfbcvm/vp.dat", "wb")
-    f_easting = open("./sfbcvm/easting.dat", "wb")
-    f_northing = open("./sfbcvm/northing.dat", "wb")
+    f_vp = open("./uwsfbcvm/vp.dat", "wb")
+    f_easting = open("./uwsfbcvm/easting.dat", "wb")
+    f_northing = open("./uwsfbcvm/northing.dat", "wb")
 
     vp_arr = array.array('f', (-1.0,) * (dimension_x * dimension_y * dimension_z))
     easting_arr = array.array('f', (-1,) * (dimension_x * dimension_y * dimension_z))
@@ -189,7 +173,6 @@ def main():
 
 #       print (total_cnt, "loc",loc," ", x_pos," ",y_pos," ",z_pos," >> ",easting_v," ",northing_v," ",depth_v,":",vp )
 
-      
         x_pos = x_pos + 1
         if(x_pos == dimension_x) :
           x_pos = 0;
@@ -209,7 +192,7 @@ def main():
     f_easting.close()
     f_northing.close()
 
-    print("Done! with NaN", nan_cnt, "toal", total_cnt)
+    print("Done! with NaN(", nan_cnt, ") total(", total_cnt,")")
 
 if __name__ == "__main__":
     main()

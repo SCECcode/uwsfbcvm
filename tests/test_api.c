@@ -1,10 +1,10 @@
 /**
  * @file test_api.c
- * @brief Bootstraps the test framework for the SFBCVM library.
+ * @brief Bootstraps the test framework for the UWSFBCVM library.
  * @author - SCEC
  * @version 1.0
  *
- * Tests the SFBCVM library by loading it and executing the code as
+ * Tests the UWSFBCVM library by loading it and executing the code as
  * UCVM would do it.
  *
  */
@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include "sfbcvm.h"
+#include "uwsfbcvm.h"
 
 /**
  * Initializes and runs the test program. Tests link against the
@@ -26,11 +26,11 @@
 int main(int argc, const char* argv[]) {
 
 	// Declare the structures.
-	sfbcvm_point_t pt;
-	sfbcvm_properties_t ret;
+	uwsfbcvm_point_t pt;
+	uwsfbcvm_properties_t ret;
 
 	// Initialize the model.
-	assert(sfbcvm_init("../", "sfbcvm") == 0);
+	assert(uwsfbcvm_init("../", "uwsfbcvm") == 0);
 
 	printf("Loaded the model successfully.\n");
 
@@ -52,7 +52,7 @@ int main(int argc, const char* argv[]) {
 
 	printf("Model closed successfully.\n");
 
-	printf("\nALL SFBCVM TESTS PASSED");
+	printf("\nALL UWSFBCVM TESTS PASSED");
 
 	return 0;
 }
