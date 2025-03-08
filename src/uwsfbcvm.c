@@ -172,7 +172,6 @@ delta_lat;
     	}
 
            data[i].rho = uwsfbcvm_calculate_density(data[i].vp);
-           data[i].vs = uwsfbcvm_calculate_vs(data[i].vp);
     }
 
     return SUCCESS;
@@ -207,9 +206,24 @@ void uwsfbcvm_read_properties(int x, int y, int z, uwsfbcvm_properties_t *data) 
 //fprintf(stderr,"XX read from location memory %d, %lf\n", location, data->vp);
     } else if (uwsfbcvm_velocity_model->vp_status == 1) {
     	// Read from file.
+        fp = (FILE *)uwsfbcvm_velocity_model->vp;
     	fseek(fp, location * sizeof(float), SEEK_SET);
     	fread(&(data->vp), sizeof(float), 1, fp);
 //fprintf(stderr,"XX read from location file %d, %lf\n", location, data->vp);
+    }
+
+    // Check our loaded components of the model.
+    if (uwsfbcvm_velocity_model->vs_status == 2) {
+    	// Read from memory.
+    	ptr = (float *)uwsfbcvm_velocity_model->vs;
+    	data->vs = ptr[location];
+//fprintf(stderr,"XX read from location memory %d, %lf\n", location, data->vs);
+    } else if (uwsfbcvm_velocity_model->vp_status == 1) {
+    	// Read from file.
+        fp = (FILE *)uwsfbcvm_velocity_model->vs;
+    	fseek(fp, location * sizeof(float), SEEK_SET);
+    	fread(&(data->vs), sizeof(float), 1, fp);
+//fprintf(stderr,"XX read from location file %d, %lf\n", location, data->vs);
     }
 }
 
@@ -506,6 +520,23 @@ int uwsfbcvm_try_reading_model(uwsfbcvm_model_t *model) {
     		all_read_to_memory = 0;
     		model->vp = fopen(current_file, "rb");
     		model->vp_status = 1;
+    	}
+    	file_count++;
+    }
+
+    sprintf(current_file, "%s/vs.dat", uwsfbcvm_data_directory);
+    if (access(current_file, R_OK) == 0) {
+    	model->vs = malloc(base_malloc);
+    	if (model->vs != NULL) {
+    		// Read the model in.
+    		fp = fopen(current_file, "rb");
+    		fread(model->vs, 1, base_malloc, fp);
+    		fclose(fp);
+    		model->vs_status = 2;
+    	} else {
+    		all_read_to_memory = 0;
+    		model->vs = fopen(current_file, "rb");
+    		model->vs_status = 1;
     	}
     	file_count++;
     }

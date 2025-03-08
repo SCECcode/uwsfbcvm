@@ -132,24 +132,29 @@ def main():
     # Now we need to go through the data files and put them in the correct
     # format for LSU_IV. More specifically, we need a Vp.dat
 
-    f = open("./SFB_Vp_Model0.txt")
+    fvs = open("./Vs_model_i0.txt");
+    f_vs = open("./uwsfbcvm/vs.dat", "wb")
 
-    f_vp = open("./uwsfbcvm/vp.dat", "wb")
     f_easting = open("./uwsfbcvm/easting.dat", "wb")
     f_northing = open("./uwsfbcvm/northing.dat", "wb")
 
     vp_arr = array.array('f', (-1.0,) * (dimension_x * dimension_y * dimension_z))
+    vs_arr = array.array('f', (-1.0,) * (dimension_x * dimension_y * dimension_z))
     easting_arr = array.array('f', (-1,) * (dimension_x * dimension_y * dimension_z))
     northing_arr = array.array('f', (-1,) * (dimension_x * dimension_y * dimension_z))
 
     print ("dimension is", (dimension_x * dimension_y * dimension_z))
 
-    nan_cnt = 0
-    total_cnt =0;
+    fvp = open("./Vp_model_i0.txt");
+    f_vp = open("./uwsfbcvm/vp.dat", "wb")
+    vp_nan_cnt = 0
+    vp_total_cnt =0;
+
     x_pos=0;
     y_pos=0;
     z_pos=0;
-    for line in f:
+
+    for line in fvp:
         arr = line.split()
 
         vp = -1.0
@@ -162,16 +167,14 @@ def main():
            vp = float(tmp)
            vp = vp * 1000.0;
         else:
-           nan_cnt = nan_cnt + 1
+           vp_nan_cnt = vp_nan_cnt + 1
 
-        total_cnt = total_cnt + 1
+        vp_total_cnt = vp_total_cnt + 1
 
         loc =z_pos * (dimension_y * dimension_x) + (y_pos * dimension_x) + x_pos
         vp_arr[loc] = vp
         easting_arr[loc] = easting_v
         northing_arr[loc] = northing_v
-
-#       print (total_cnt, "loc",loc," ", x_pos," ",y_pos," ",z_pos," >> ",easting_v," ",northing_v," ",depth_v,":",vp )
 
         x_pos = x_pos + 1
         if(x_pos == dimension_x) :
@@ -187,12 +190,55 @@ def main():
     easting_arr.tofile(f_easting)
     northing_arr.tofile(f_northing)
 
-    f.close()
+    fvp.close()
     f_vp.close()
+
     f_easting.close()
     f_northing.close()
 
-    print("Done! with NaN(", nan_cnt, ") total(", total_cnt,")")
+    fvs = open("./Vs_model_i0.txt");
+    f_vs = open("./uwsfbcvm/vs.dat", "wb")
+    vs_nan_cnt = 0
+    vs_total_cnt =0;
+
+    x_pos=0;
+    y_pos=0;
+    z_pos=0;
+
+    for line in fvs:
+        arr = line.split()
+
+        vs = -1.0
+        tmp = arr[3]
+
+        if( tmp != "NaN" ) :
+           vs = float(tmp)
+           vs = vs * 1000.0;
+        else:
+           vs_nan_cnt = vs_nan_cnt + 1
+
+        vs_total_cnt = vs_total_cnt + 1
+
+        loc =z_pos * (dimension_y * dimension_x) + (y_pos * dimension_x) + x_pos
+        vs_arr[loc] = vs
+
+        x_pos = x_pos + 1
+        if(x_pos == dimension_x) :
+          x_pos = 0;
+          y_pos = y_pos+1
+          if(y_pos == dimension_y) :
+            y_pos=0;
+            z_pos = z_pos+1
+            if(z_pos == dimension_z) :
+              print ("All DONE")
+
+    vs_arr.tofile(f_vs)
+    fvs.close()
+    f_vs.close()
+
+    print("Done! with NaN(", vp_nan_cnt, ") total(", vp_total_cnt,")")
+    print("Done! with NaN(", vs_nan_cnt, ") total(", vs_total_cnt,")")
+
 
 if __name__ == "__main__":
     main()

@@ -5,11 +5,9 @@ utm_zone = 10
 model_dir =  uwsfbcvm 
 model_data_path  = https://g-c662a6.a78b8.36fe.data.globus.org/ucvm/models
 
-## origin:
-## upper: (-124.0575,39.4387)
 # Number of cells in x, y, and z.
-nx = 73
-ny = 82
+nx = 41
+ny = 37
 nz = 36
 
 # Depth, in meters
@@ -18,24 +16,14 @@ depth = 35000
 depth_interval = 1000
 
 # Corners, in LATLON 
-bottom_left_corner_lon = -124.0070
-bottom_left_corner_lat = 35.7889
-bottom_right_corner_lon = -120.0249
-bottom_right_corner_lat = 35.7563
-top_left_corner_lon = -124.0575
-top_left_corner_lat = 39.4387
-top_right_corner_lon = -119.8760
-top_right_corner_lat = 39.4016
-
-# Corners, in UTM meter, zone 10, 'N'
-bottom_left_corner_e = 409000
-bottom_left_corner_n = 3961000
-bottom_right_corner_e = 769000
-bottom_right_corner_n = 3961000
-top_left_corner_e = 409000
-top_left_corner_n = 4366000
-top_right_corner_e = 769000
-top_right_corner_n = 4366000
+bottom_left_corner_lon = -124.00
+bottom_left_corner_lat = 35.80
+bottom_right_corner_lon = -120.00
+bottom_right_corner_lat = 35.80
+top_left_corner_lon = -124.00
+top_left_corner_lat = 39.40
+top_right_corner_lon = -120.00
+top_right_corner_lat = 39.40
 
 ## bilinear or trilinear interpolation
 interpolation = off 
