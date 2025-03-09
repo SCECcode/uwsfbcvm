@@ -61,11 +61,11 @@ int uwsfbcvm_init(const char *dir, const char *label) {
     tempVal = uwsfbcvm_try_reading_model(uwsfbcvm_velocity_model);
 
     if (tempVal == SUCCESS) {
-    	fprintf(stderr, "WARNING: Could not load model into memory. Reading the model from the\n");
-    	fprintf(stderr, "hard disk may result in slow performance.");
+        fprintf(stderr, "WARNING: Could not load model into memory. Reading the model from the\n");
+        fprintf(stderr, "hard disk may result in slow performance.");
     } else if (tempVal == FAIL) {
-    	print_error("No model file was found to read from.");
-    	return FAIL;
+        print_error("No model file was found to read from.");
+        return FAIL;
     }
 
     // In order to simplify our calculations in the query, we want to rotate the box so that the bottom-left
@@ -74,9 +74,9 @@ int uwsfbcvm_init(const char *dir, const char *label) {
     // the X and Y axis determines which grid points we use for the interpolation routine.
 
     uwsfbcvm_total_height_m = sqrt(pow(uwsfbcvm_configuration->top_left_corner_lat - uwsfbcvm_configuration->bottom_left_corner_lat, 2.0f) +
-    					  pow(uwsfbcvm_configuration->top_left_corner_lon - uwsfbcvm_configuration->bottom_left_corner_lon, 2.0f));
+                          pow(uwsfbcvm_configuration->top_left_corner_lon - uwsfbcvm_configuration->bottom_left_corner_lon, 2.0f));
     uwsfbcvm_total_width_m  = sqrt(pow(uwsfbcvm_configuration->top_right_corner_lat - uwsfbcvm_configuration->top_left_corner_lat, 2.0f) +
-    					  pow(uwsfbcvm_configuration->top_right_corner_lon - uwsfbcvm_configuration->top_left_corner_lon, 2.0f));
+                          pow(uwsfbcvm_configuration->top_right_corner_lon - uwsfbcvm_configuration->top_left_corner_lon, 2.0f));
 
         /* setup config_string */
         sprintf(uwsfbcvm_config_string,"config = %s\n",configbuf);
@@ -101,75 +101,78 @@ int uwsfbcvm_query(uwsfbcvm_point_t *points, uwsfbcvm_properties_t *data, int nu
     int load_x_coord = 0, load_y_coord = 0, load_z_coord = 0;
     double x_percent = 0, y_percent = 0, z_percent = 0;
     uwsfbcvm_properties_t surrounding_points[8];
-        double lon_e, lat_n;
+    double lon_e, lat_n;
 
-    int zone = 11;
+    int zone = uwsfbcvm_configuration->utm_zone;
     int longlat2utm = 0;
 
-        double delta_lon = (uwsfbcvm_configuration->top_right_corner_lon - uwsfbcvm_configuration->bottom_left_corner_lon)/(uwsfbcvm_configuration->nx - 1);
-        double delta_lat = (uwsfbcvm_configuration->top_right_corner_lat - uwsfbcvm_configuration->bottom_left_corner_lat)/(uwsfbcvm_configuration->ny - 1);
+    double delta_lon = (uwsfbcvm_configuration->top_right_corner_lon - uwsfbcvm_configuration->bottom_left_corner_lon)/(uwsfbcvm_configuration->nx - 1);
+    double delta_lat = (uwsfbcvm_configuration->top_right_corner_lat - uwsfbcvm_configuration->bottom_left_corner_lat)/(uwsfbcvm_configuration->ny - 1);
 
     for (i = 0; i < numpoints; i++) {
-    	lon_e = points[i].longitude; 
-    	lat_n = points[i].latitude; 
-//fprintf(stderr,">>>>>>>>>working on i >> %d <<<<<<<<< %lf %lf\n",i, lon_e, lat_n);
+        lon_e = points[i].longitude; 
+        lat_n = points[i].latitude; 
 
-    	// Which point base point does that correspond to?
-    	load_y_coord = (int)(round((lat_n - uwsfbcvm_configuration->bottom_left_corner_lat) / delta_lat));
-    	load_x_coord = (int)(round((lon_e - uwsfbcvm_configuration->bottom_left_corner_lon) / delta_lon));
-    	load_z_coord = (int)((points[i].depth)/1000);
+        // Which point base point does that correspond to?
+        load_y_coord = (int)(round((lat_n - uwsfbcvm_configuration->bottom_left_corner_lat) / delta_lat));
+        load_x_coord = (int)(round((lon_e - uwsfbcvm_configuration->bottom_left_corner_lon) / delta_lon));
+        load_z_coord = (int)((points[i].depth)/1000);
 
-//fprintf(stderr,"coord %d %d %d\n", load_x_coord, load_y_coord, load_z_coord);
+        if(uwsfbcvm_debug) {
+            fprintf(stderrfp,"coord %d %d %d\n", load_x_coord, load_y_coord, load_z_coord);
+        }
 
-    	// Are we outside the model's X and Y and Z boundaries?
-    	if (points[i].depth > uwsfbcvm_configuration->depth || load_x_coord > uwsfbcvm_configuration->nx -1  || load_y_coord > uwsfbcvm_configuration->ny -1 || load_x_coord < 0 || load_y_coord < 0 || load_z_coord < 0) {
-    		data[i].vp = -1;
-    		data[i].vs = -1;
-    		data[i].rho = -1;
-    		continue;
-    	}
+    // Are we outside the model's X and Y and Z boundaries?
+        if (points[i].depth > uwsfbcvm_configuration->depth || load_x_coord > uwsfbcvm_configuration->nx -1  || load_y_coord > uwsfbcvm_configuration->ny -1 || load_x_coord < 0 || load_y_coord < 0 || load_z_coord < 0) {
+            data[i].vp = -1;
+            data[i].vs = -1;
+            data[i].rho = -1;
+            continue;
+        }
 
-    	// Get the X, Y, and Z percentages for the bilinear or trilinear interpolation below.
-    	x_percent =fmod((lon_e - uwsfbcvm_configuration->bottom_left_corner_lon), delta_lon) /delta_lon;
-    	y_percent = fmod((lat_n - uwsfbcvm_configuration->bottom_left_corner_lat), delta_lat)/
+        // Get the X, Y, and Z percentages for the bilinear or trilinear interpolation below.
+        x_percent =fmod((lon_e - uwsfbcvm_configuration->bottom_left_corner_lon), delta_lon) /delta_lon;
+        y_percent = fmod((lat_n - uwsfbcvm_configuration->bottom_left_corner_lat), delta_lat)/
 delta_lat;
-    	z_percent = fmod(points[i].depth, uwsfbcvm_configuration->depth_interval) / uwsfbcvm_configuration->depth_interval;
+        z_percent = fmod(points[i].depth, uwsfbcvm_configuration->depth_interval) / uwsfbcvm_configuration->depth_interval;
 
-//fprintf(stderr,"percent %lf %lf %lf\n", x_percent, y_percent, z_percent);
-    	if (load_z_coord == 0 && z_percent == 0) {
-    		// We're below the model boundaries. Bilinearly interpolate the bottom plane and use that value.
-    		load_z_coord = 0;
-                   if(uwsfbcvm_configuration->interpolation) {
+        if(uwsfbcvm_debug) {
+	    fprintf(stderrfp," percent %lf %lf %lf\n", x_percent, y_percent, z_percent);
+        }
 
-    		// Get the four properties.
-    		uwsfbcvm_read_properties(load_x_coord,     load_y_coord,     load_z_coord,     &(surrounding_points[0]));	// Orgin.
-    		uwsfbcvm_read_properties(load_x_coord + 1, load_y_coord,     load_z_coord,     &(surrounding_points[1]));	// Orgin + 1x
-    		uwsfbcvm_read_properties(load_x_coord,     load_y_coord + 1, load_z_coord,     &(surrounding_points[2]));	// Orgin + 1y
-    		uwsfbcvm_read_properties(load_x_coord + 1, load_y_coord + 1, load_z_coord,     &(surrounding_points[3]));	// Orgin + x + y, forms top plane.
+        if (load_z_coord == 0) {
+          // We're below the model boundaries. Bilinearly interpolate the bottom plane and use that value.
+            if(uwsfbcvm_configuration->interpolation) {
 
-    		uwsfbcvm_bilinear_interpolation(x_percent, y_percent, surrounding_points, &(data[i]));
-                  } else {
-    		uwsfbcvm_read_properties(load_x_coord,     load_y_coord,     load_z_coord,     &(data[i]));	// Orgin.
-                  }
+            // Get the four properties.
+                uwsfbcvm_read_properties(load_x_coord,     load_y_coord,     load_z_coord,     &(surrounding_points[0]));    // Orgin.
+                uwsfbcvm_read_properties(load_x_coord + 1, load_y_coord,     load_z_coord,     &(surrounding_points[1]));    // Orgin + 1x
+                uwsfbcvm_read_properties(load_x_coord,     load_y_coord + 1, load_z_coord,     &(surrounding_points[2]));    // Orgin + 1y
+                uwsfbcvm_read_properties(load_x_coord + 1, load_y_coord + 1, load_z_coord,     &(surrounding_points[3]));    // Orgin + x + y, forms top plane.
 
-    	} else {
-    	  if( uwsfbcvm_configuration->interpolation) {
-    		// Read all the surrounding point properties.
-    		uwsfbcvm_read_properties(load_x_coord,     load_y_coord,     load_z_coord,     &(surrounding_points[0]));	// Orgin.
-    		uwsfbcvm_read_properties(load_x_coord + 1, load_y_coord,     load_z_coord,     &(surrounding_points[1]));	// Orgin + 1x
-    		uwsfbcvm_read_properties(load_x_coord,     load_y_coord + 1, load_z_coord,     &(surrounding_points[2]));	// Orgin + 1y
-    		uwsfbcvm_read_properties(load_x_coord + 1, load_y_coord + 1, load_z_coord,     &(surrounding_points[3]));	// Orgin + x + y, forms top plane.
-    		uwsfbcvm_read_properties(load_x_coord,     load_y_coord,     load_z_coord - 1, &(surrounding_points[4]));	// Bottom plane origin
-    		uwsfbcvm_read_properties(load_x_coord + 1, load_y_coord,     load_z_coord - 1, &(surrounding_points[5]));	// +1x
-    		uwsfbcvm_read_properties(load_x_coord,     load_y_coord + 1, load_z_coord - 1, &(surrounding_points[6]));	// +1y
-    		uwsfbcvm_read_properties(load_x_coord + 1, load_y_coord + 1, load_z_coord - 1, &(surrounding_points[7]));	// +x +y, forms bottom plane.
+                uwsfbcvm_bilinear_interpolation(x_percent, y_percent, surrounding_points, &(data[i]));
+                } else {
+                    uwsfbcvm_read_properties(load_x_coord,     load_y_coord,     load_z_coord,     &(data[i]));    // Orgin.
+            }
 
-    		uwsfbcvm_trilinear_interpolation(x_percent, y_percent, z_percent, surrounding_points, &(data[i]));
+            } else { // load_z_coord != 0
+                if( uwsfbcvm_configuration->interpolation) {
+            // Read all the surrounding point properties.
+            uwsfbcvm_read_properties(load_x_coord,     load_y_coord,     load_z_coord,     &(surrounding_points[0]));    // Orgin.
+            uwsfbcvm_read_properties(load_x_coord + 1, load_y_coord,     load_z_coord,     &(surrounding_points[1]));    // Orgin + 1x
+            uwsfbcvm_read_properties(load_x_coord,     load_y_coord + 1, load_z_coord,     &(surrounding_points[2]));    // Orgin + 1y
+            uwsfbcvm_read_properties(load_x_coord + 1, load_y_coord + 1, load_z_coord,     &(surrounding_points[3]));    // Orgin + x + y, forms top plane.
+            uwsfbcvm_read_properties(load_x_coord,     load_y_coord,     load_z_coord - 1, &(surrounding_points[4]));    // Bottom plane origin
+            uwsfbcvm_read_properties(load_x_coord + 1, load_y_coord,     load_z_coord - 1, &(surrounding_points[5]));    // +1x
+            uwsfbcvm_read_properties(load_x_coord,     load_y_coord + 1, load_z_coord - 1, &(surrounding_points[6]));    // +1y
+            uwsfbcvm_read_properties(load_x_coord + 1, load_y_coord + 1, load_z_coord - 1, &(surrounding_points[7]));    // +x +y, forms bottom plane.
+
+            uwsfbcvm_trilinear_interpolation(x_percent, y_percent, z_percent, surrounding_points, &(data[i]));
                     } else {
                         // no interpolation, data as it is
-    		uwsfbcvm_read_properties(load_x_coord,     load_y_coord,     load_z_coord,     &(data[i]));	// Orgin.
-                    }
-    	}
+                        uwsfbcvm_read_properties(load_x_coord,     load_y_coord,     load_z_coord,     &(data[i]));    // Orgin.
+                }
+           }
 
            data[i].rho = uwsfbcvm_calculate_density(data[i].vp);
     }
@@ -197,33 +200,32 @@ void uwsfbcvm_read_properties(int x, int y, int z, uwsfbcvm_properties_t *data) 
     FILE *fp = NULL;
 
     int location = z * (uwsfbcvm_configuration->nx * uwsfbcvm_configuration->ny) + (y * uwsfbcvm_configuration->nx) + x;
+    if(uwsfbcvm_debug) {
+fprintf(stderrfp, "read_properties location.. %d\n", location);
+    }
 
     // Check our loaded components of the model.
     if (uwsfbcvm_velocity_model->vp_status == 2) {
-    	// Read from memory.
-    	ptr = (float *)uwsfbcvm_velocity_model->vp;
-    	data->vp = ptr[location];
-//fprintf(stderr,"XX read from location memory %d, %lf\n", location, data->vp);
+        // Read from memory.
+        ptr = (float *)uwsfbcvm_velocity_model->vp;
+        data->vp = ptr[location];
     } else if (uwsfbcvm_velocity_model->vp_status == 1) {
-    	// Read from file.
+        // Read from file.
         fp = (FILE *)uwsfbcvm_velocity_model->vp;
-    	fseek(fp, location * sizeof(float), SEEK_SET);
-    	fread(&(data->vp), sizeof(float), 1, fp);
-//fprintf(stderr,"XX read from location file %d, %lf\n", location, data->vp);
+        fseek(fp, location * sizeof(float), SEEK_SET);
+        fread(&(data->vp), sizeof(float), 1, fp);
     }
 
     // Check our loaded components of the model.
     if (uwsfbcvm_velocity_model->vs_status == 2) {
-    	// Read from memory.
-    	ptr = (float *)uwsfbcvm_velocity_model->vs;
-    	data->vs = ptr[location];
-//fprintf(stderr,"XX read from location memory %d, %lf\n", location, data->vs);
+        // Read from memory.
+        ptr = (float *)uwsfbcvm_velocity_model->vs;
+        data->vs = ptr[location];
     } else if (uwsfbcvm_velocity_model->vp_status == 1) {
-    	// Read from file.
+        // Read from file.
         fp = (FILE *)uwsfbcvm_velocity_model->vs;
-    	fseek(fp, location * sizeof(float), SEEK_SET);
-    	fread(&(data->vs), sizeof(float), 1, fp);
-//fprintf(stderr,"XX read from location file %d, %lf\n", location, data->vs);
+        fseek(fp, location * sizeof(float), SEEK_SET);
+        fread(&(data->vs), sizeof(float), 1, fp);
     }
 }
 
@@ -238,7 +240,7 @@ void uwsfbcvm_read_properties(int x, int y, int z, uwsfbcvm_properties_t *data) 
  * @param ret_properties Returned data properties
  */
 void uwsfbcvm_trilinear_interpolation(double x_percent, double y_percent, double z_percent,
-    						 uwsfbcvm_properties_t *eight_points, uwsfbcvm_properties_t *ret_properties) {
+                             uwsfbcvm_properties_t *eight_points, uwsfbcvm_properties_t *ret_properties) {
     uwsfbcvm_properties_t *temp_array = calloc(2, sizeof(uwsfbcvm_properties_t));
     uwsfbcvm_properties_t *four_points = eight_points;
 
@@ -362,47 +364,47 @@ int uwsfbcvm_read_configuration(char *file, uwsfbcvm_configuration_t *config) {
 
     // If our file pointer is null, an error has occurred. Return fail.
     if (fp == NULL) {
-    	print_error("Could not open the configuration file.");
-    	return FAIL;
+        print_error("Could not open the configuration file.");
+        return FAIL;
     }
 
     // Read the lines in the configuration file.
     while (fgets(line_holder, sizeof(line_holder), fp) != NULL) {
-    	if (line_holder[0] != '#' && line_holder[0] != ' ' && line_holder[0] != '\n') {
-    		sscanf(line_holder, "%s = %s", key, value);
+        if (line_holder[0] != '#' && line_holder[0] != ' ' && line_holder[0] != '\n') {
+            sscanf(line_holder, "%s = %s", key, value);
 
-    		// Which variable are we editing?
-    		if (strcmp(key, "utm_zone") == 0)
-      			config->utm_zone = atoi(value);
-    		if (strcmp(key, "model_dir") == 0)
-    			sprintf(config->model_dir, "%s", value);
-    		if (strcmp(key, "nx") == 0)
-      			config->nx = atoi(value);
-    		if (strcmp(key, "ny") == 0)
-      		 	config->ny = atoi(value);
-    		if (strcmp(key, "nz") == 0)
-      		 	config->nz = atoi(value);
-    		if (strcmp(key, "depth") == 0)
-      		 	config->depth = atof(value);
-    		if (strcmp(key, "top_left_corner_lon") == 0)
-    			config->top_left_corner_lon = atof(value);
-    		if (strcmp(key, "top_left_corner_lat") == 0)
-    	 		config->top_left_corner_lat = atof(value);
-    		if (strcmp(key, "top_right_corner_lon") == 0)
-    			config->top_right_corner_lon = atof(value);
-    		if (strcmp(key, "top_right_corner_lat") == 0)
-    			config->top_right_corner_lat = atof(value);
-    		if (strcmp(key, "bottom_left_corner_lon") == 0)
-    			config->bottom_left_corner_lon = atof(value);
-    		if (strcmp(key, "bottom_left_corner_lat") == 0)
-    			config->bottom_left_corner_lat = atof(value);
-    		if (strcmp(key, "bottom_right_corner_lon") == 0)
-    			config->bottom_right_corner_lon = atof(value);
-    		if (strcmp(key, "bottom_right_corner_lat") == 0)
-    			config->bottom_right_corner_lat = atof(value);
-    		if (strcmp(key, "depth_interval") == 0)
-    			config->depth_interval = atof(value);
-    		if (strcmp(key, "interpolation") == 0) {
+            // Which variable are we editing?
+            if (strcmp(key, "utm_zone") == 0)
+                  config->utm_zone = atoi(value);
+            if (strcmp(key, "model_dir") == 0)
+                sprintf(config->model_dir, "%s", value);
+            if (strcmp(key, "nx") == 0)
+                  config->nx = atoi(value);
+            if (strcmp(key, "ny") == 0)
+                   config->ny = atoi(value);
+            if (strcmp(key, "nz") == 0)
+                   config->nz = atoi(value);
+            if (strcmp(key, "depth") == 0)
+                   config->depth = atof(value);
+            if (strcmp(key, "top_left_corner_lon") == 0)
+                config->top_left_corner_lon = atof(value);
+            if (strcmp(key, "top_left_corner_lat") == 0)
+                 config->top_left_corner_lat = atof(value);
+            if (strcmp(key, "top_right_corner_lon") == 0)
+                config->top_right_corner_lon = atof(value);
+            if (strcmp(key, "top_right_corner_lat") == 0)
+                config->top_right_corner_lat = atof(value);
+            if (strcmp(key, "bottom_left_corner_lon") == 0)
+                config->bottom_left_corner_lon = atof(value);
+            if (strcmp(key, "bottom_left_corner_lat") == 0)
+                config->bottom_left_corner_lat = atof(value);
+            if (strcmp(key, "bottom_right_corner_lon") == 0)
+                config->bottom_right_corner_lon = atof(value);
+            if (strcmp(key, "bottom_right_corner_lat") == 0)
+                config->bottom_right_corner_lat = atof(value);
+            if (strcmp(key, "depth_interval") == 0)
+                config->depth_interval = atof(value);
+            if (strcmp(key, "interpolation") == 0) {
                                 if (strcmp(value, "on") == 0) {
                                      config->interpolation = 1;
                                      } else {
@@ -410,17 +412,17 @@ int uwsfbcvm_read_configuration(char *file, uwsfbcvm_configuration_t *config) {
                                 }
                         };
 
-    	}
+        }
     }
 
     // Have we set up all configuration parameters?
     if (config->utm_zone == 0 || config->nx == 0 || config->ny == 0 || config->nz == 0 || config->model_dir[0] == '\0' ||
-    	config->top_left_corner_lon == 0 || config->top_left_corner_lat == 0 || config->top_right_corner_lon == 0 ||
-    	config->top_right_corner_lat == 0 || config->bottom_left_corner_lon == 0 || config->bottom_left_corner_lat == 0 ||
-    	config->bottom_right_corner_lon == 0 || config->bottom_right_corner_lat == 0 || config->depth == 0 ||
-    	config->depth_interval == 0) {
-    	print_error("One configuration parameter not specified. Please check your configuration file.");
-    	return FAIL;
+        config->top_left_corner_lon == 0 || config->top_left_corner_lat == 0 || config->top_right_corner_lon == 0 ||
+        config->top_right_corner_lat == 0 || config->bottom_left_corner_lon == 0 || config->bottom_left_corner_lat == 0 ||
+        config->bottom_right_corner_lon == 0 || config->bottom_right_corner_lat == 0 || config->depth == 0 ||
+        config->depth_interval == 0) {
+        print_error("One configuration parameter not specified. Please check your configuration file.");
+        return FAIL;
     }
 
     fclose(fp);
@@ -455,32 +457,6 @@ double uwsfbcvm_calculate_density(double vp) {
 }
 
 /**
- * Calculates the vs based off of Vp. Base on Brocher's formulae
- *
- * https://pubs.usgs.gov/of/2005/1317/of2005-1317.pdf
- *
- * @param vp
- * @return Vs, in km.
- * Vs derived from Vp, Brocher (2005) eqn 1.
- * [eqn. 1] Vs (km/s) = 0.7858 – 1.2344Vp + 0.7949Vp2 – 0.1238Vp3 + 0.0064Vp4.
- * Equation 1 is valid for 1.5 < Vp < 8 km/s.
- */
-double uwsfbcvm_calculate_vs(double vp) {
-     double retVal ;
-
-     vp = vp * 0.001;
-     double t1= (vp * 1.2344);
-     double t2= ((vp * vp)* 0.7949); 
-     double t3= ((vp * vp * vp) * 0.1238);
-     double t4= ((vp * vp * vp * vp) * 0.0064);
-     retVal = 0.7858 - t1 + t2 - t3 + t4;
-     retVal = retVal * 1000.0;
-
-     return retVal;
-}
-
-
-/**
  * Prints the error string provided.
  *
  * @param err The error string to print out to stderr.
@@ -509,40 +485,40 @@ int uwsfbcvm_try_reading_model(uwsfbcvm_model_t *model) {
     // Let's see what data we actually have.
     sprintf(current_file, "%s/vp.dat", uwsfbcvm_data_directory);
     if (access(current_file, R_OK) == 0) {
-    	model->vp = malloc(base_malloc);
-    	if (model->vp != NULL) {
-    		// Read the model in.
-    		fp = fopen(current_file, "rb");
-    		fread(model->vp, 1, base_malloc, fp);
-    		fclose(fp);
-    		model->vp_status = 2;
-    	} else {
-    		all_read_to_memory = 0;
-    		model->vp = fopen(current_file, "rb");
-    		model->vp_status = 1;
-    	}
-    	file_count++;
+        model->vp = malloc(base_malloc);
+        if (model->vp != NULL) {
+            // Read the model in.
+            fp = fopen(current_file, "rb");
+            fread(model->vp, 1, base_malloc, fp);
+            fclose(fp);
+            model->vp_status = 2;
+        } else {
+            all_read_to_memory = 0;
+            model->vp = fopen(current_file, "rb");
+            model->vp_status = 1;
+        }
+        file_count++;
     }
 
     sprintf(current_file, "%s/vs.dat", uwsfbcvm_data_directory);
     if (access(current_file, R_OK) == 0) {
-    	model->vs = malloc(base_malloc);
-    	if (model->vs != NULL) {
-    		// Read the model in.
-    		fp = fopen(current_file, "rb");
-    		fread(model->vs, 1, base_malloc, fp);
-    		fclose(fp);
-    		model->vs_status = 2;
-    	} else {
-    		all_read_to_memory = 0;
-    		model->vs = fopen(current_file, "rb");
-    		model->vs_status = 1;
-    	}
-    	file_count++;
+        model->vs = malloc(base_malloc);
+        if (model->vs != NULL) {
+            // Read the model in.
+            fp = fopen(current_file, "rb");
+            fread(model->vs, 1, base_malloc, fp);
+            fclose(fp);
+            model->vs_status = 2;
+        } else {
+            all_read_to_memory = 0;
+            model->vs = fopen(current_file, "rb");
+            model->vs_status = 1;
+        }
+        file_count++;
     }
 
     if (file_count == 0)
-    	return FAIL;
+        return FAIL;
         else if (all_read_to_memory == 0)
                 return SUCCESS;
         else

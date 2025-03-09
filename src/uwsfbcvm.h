@@ -162,8 +162,6 @@ void uwsfbcvm_read_properties(int x, int y, int z, uwsfbcvm_properties_t *data);
 int uwsfbcvm_try_reading_model(uwsfbcvm_model_t *model);
 /** Calculates density from Vs. */
 double uwsfbcvm_calculate_density(double vp);
-/** Calculates Vs from Vp. */
-double uwsfbcvm_calculate_vs(double vp);
 
 // Interpolation Functions
 /** Linearly interpolates two uwsfbcvm_properties_t structures */
