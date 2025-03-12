@@ -13,6 +13,9 @@ if WITH_UWSFBCVM_LARGEDATA_DIR
 	echo "USING WITH_UWSFBCVM_LARGEDATA_DIR in uwsfbcvm"
 else
 	./make_data_files.py
+	if [ ! -d "uwsfbcvm" ]; then \
+		./make_data_files.py; \
+	fi
 endif
 
 install:
