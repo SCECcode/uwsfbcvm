@@ -29,7 +29,7 @@
 #define NA -1 
 
 /* config string */
-#define SFBCVM_CONFIG_MAX 1000
+#define UWSFBCVM_CONFIG_MAX 1000
 
 // Structures
 /** Defines a point (latitude, longitude, and depth) in WGS84 format */
@@ -56,7 +56,7 @@ typedef struct uwsfbcvm_properties_t {
         double qs;
 } uwsfbcvm_properties_t;
 
-/** The SFBCVM configuration structure. */
+/** The UWSFBCVM configuration structure. */
 typedef struct uwsfbcvm_configuration_t {
 	/** The zone of UTM projection */
 	int utm_zone;
@@ -99,11 +99,15 @@ typedef struct uwsfbcvm_model_t {
 	void *vp;
 	/** Vp status: 0 = not found, 1 = found and not in memory, 2 = found and in memory */
 	int vp_status;
+	/** A pointer to the Vs data either in memory or disk. Null if does not exist. */
+	void *vs;
+	/** Vs status: 0 = not found, 1 = found and not in memory, 2 = found and in memory */
+	int vs_status;
 } uwsfbcvm_model_t;
 
 // Constants
 /** The version of the model. */
-const char *uwsfbcvm_version_string = "SFBCVM";
+const char *uwsfbcvm_version_string = "UWSFBCVM";
 
 // Variables
 /** Set to 1 when the model is ready for query. */
@@ -158,8 +162,6 @@ void uwsfbcvm_read_properties(int x, int y, int z, uwsfbcvm_properties_t *data);
 int uwsfbcvm_try_reading_model(uwsfbcvm_model_t *model);
 /** Calculates density from Vs. */
 double uwsfbcvm_calculate_density(double vp);
-/** Calculates Vs from Vp. */
-double uwsfbcvm_calculate_vs(double vp);
 
 // Interpolation Functions
 /** Linearly interpolates two uwsfbcvm_properties_t structures */
