@@ -2,6 +2,12 @@ All communication regarding using UCVM should be directed to software@scec.org.
 Any scientific questions regarding this model should be directed to the researchers 
 behind this model.
 
-Cliff Thurber
+Cliff Thurber cthurber@wisc.edu
 
-cthurber@wisc.edu
+The data and code for this model is based off of the following paper:
+
+Lin, G., C. H. Thurber, H. Zhang, E. Hauksson, P. Shearer, F. Waldhauser, 
+      T. M. Brocher, and J. Hardebeck (2010), A California statewide 
+      three-dimensional seismic velocity model from both absolute and 
+      differential times. Bulletin of the Seismological Society of America,
+      100, 225-240. doi:10.1785/0120090028. SCEC Contribution 1360
