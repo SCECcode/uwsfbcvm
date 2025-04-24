@@ -11,7 +11,7 @@ locations.
 
 ## Installation
 
-This package is intended to be installed as part of the UCVM framework,
+This package is intended to be installed as part of the UCVM framework
 version 25.x or higher.
 
 ## Library
@@ -35,4 +35,8 @@ to the model's authors, located in the AUTHORS file.
 ## Note
 
 A right rectangle, no rotation 
+
+Density is calculated, from https://pubs.usgs.gov/of/2005/1317/of2005-1317.pdf
+  *[eqn. 6] r (g/cm3) = 1.6612Vp – 0.4721Vp2 + 0.0671Vp3 – 0.0043Vp4 + 0.000106Vp5
+
 
