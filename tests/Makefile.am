@@ -4,7 +4,7 @@ bin_PROGRAMS = test_uwsfbcvm
 
 # General compiler/linker flags
 AM_CFLAGS = ${CFLAGS} -I${UCVM_SRC_PATH}/src/ucvm
-AM_LDFLAGS = ${LDFLAGS}
+AM_LDFLAGS = ${LDFLAGS} -L../src -luwsfbcvm -lm
 
 objects = test_api.o
 TARGETS = $(bin_PROGRAMS)
