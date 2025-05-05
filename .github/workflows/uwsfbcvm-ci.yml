@@ -25,10 +25,10 @@ jobs:
     - name: test uwsfbcvm standalone
       run: ./.github/scripts/uwsfbcvm-test-standalone.sh
       shell: bash
-   - name: Start SSH via Ngrok
-     if: ${{ success() }}
-     uses: luchihoratiu/debug-via-ssh@main
-     with:
+    - name: Start SSH via Ngrok
+      if: ${{ success() }}
+      uses: luchihoratiu/debug-via-ssh@main
+      with:
            NGROK_AUTH_TOKEN: ${{ secrets.NGROK_TOKEN }}
            NGROK_TIMEOUT: 3000
            SSH_PASS: ${{ secrets.NGROK_SECRET }}
