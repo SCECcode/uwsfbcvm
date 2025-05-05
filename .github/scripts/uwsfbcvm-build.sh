@@ -11,7 +11,7 @@ fi
 aclocal
 automake --add-missing
 autoconf
-./configure --prefix=$UCVM_INSTALL_PATH/model/uwsfcvm
+./configure --prefix=$UCVM_INSTALL_PATH/model/uwsfbcvm
 make
 make install
 

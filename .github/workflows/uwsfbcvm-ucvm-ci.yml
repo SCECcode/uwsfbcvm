@@ -1,20 +1,20 @@
-name: uwsfcvm-ucvm-ci
+name: uwsfbcvm-ucvm-ci
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  uwsfcvm-build-ucvm-linux:
+  uwsfbcvm-build-ucvm-linux:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: [3.7]
     steps:
     - name: set UCVM_SRC_PATH 
-      run: echo "UCVM_SRC_PATH=$RUNNER_WORKSPACE/uwsfcvm/ucvm" >> $GITHUB_ENV
+      run: echo "UCVM_SRC_PATH=$RUNNER_WORKSPACE/uwsfbcvm/ucvm" >> $GITHUB_ENV
     - name: set UCVM_INSTALL_PATH 
-      run: echo "UCVM_INSTALL_PATH=$RUNNER_WORKSPACE/uwsfcvm/target" >> $GITHUB_ENV
+      run: echo "UCVM_INSTALL_PATH=$RUNNER_WORKSPACE/uwsfbcvm/target" >> $GITHUB_ENV
 ### build ucvm(main) first 
     - id: get-ucvm 
       uses: actions/checkout@v2
@@ -25,8 +25,8 @@ jobs:
     - id: build-ucvm
       uses: ./ucvm/.github/actions/build-ucvm-action
       with:
-         initiating-repo: 'uwsfcvm'
-         target-model: 'uwsfcvm'
+         initiating-repo: 'uwsfbcvm'
+         target-model: 'uwsfbcvm'
          target-branch: 'testMei'
 #   - name: Start SSH via Ngrok
 #     if: ${{ success() }}
@@ -38,26 +38,26 @@ jobs:
     - id: get-result
       run: more ${{ steps.build-ucvm.outputs.build-log }}
       shell: bash
-    - name: move stock uwsfcvm away
-      run: (rm -rf $RUNNER_WORKSPACE/uwsfcvm/ucvm/work/model/uwsfcvm)
+    - name: move stock uwsfbcvm away
+      run: (rm -rf $RUNNER_WORKSPACE/uwsfbcvm/ucvm/work/model/uwsfbcvm)
       shell: bash
-### build uwsfcvm from github 
-    - name: checkout uwsfcvm main
+### build uwsfbcvm from github 
+    - name: checkout uwsfbcvm main
       uses: actions/checkout@v2
       with: 
-        path: uwsfcvm
+        path: uwsfbcvm
     - name: move it to the right location
-      run: (mv uwsfcvm $RUNNER_WORKSPACE/uwsfcvm/ucvm/work/model; pwd; ls)
+      run: (mv uwsfbcvm $RUNNER_WORKSPACE/uwsfbcvm/ucvm/work/model; pwd; ls)
       shell: bash
-    - name: build uwsfcvm as part of ucvm 
-      run: (cd $RUNNER_WORKSPACE/uwsfcvm/ucvm/work/model/uwsfcvm; ./.github/scripts/uwsfcvm-build.sh)
+    - name: build uwsfbcvm as part of ucvm 
+      run: (cd $RUNNER_WORKSPACE/uwsfbcvm/ucvm/work/model/uwsfbcvm; ./.github/scripts/uwsfbcvm-build.sh)
       shell: bash
 ### check ucvm is still valid
     - name: check on ucvm
       run: (source $UCVM_INSTALL_PATH/conf/ucvm_env.sh; ucvm_query -H)
       shell: bash
-    - name: test uwsfcvm with ucvm
-      run: (cd $RUNNER_WORKSPACE/uwsfcvm/ucvm/work/model/uwsfcvm; source $UCVM_INSTALL_PATH/conf/ucvm_env.sh; ./.github/scripts/uwsfcvm-test-ucvm.sh)
+    - name: test uwsfbcvm with ucvm
+      run: (cd $RUNNER_WORKSPACE/uwsfbcvm/ucvm/work/model/uwsfbcvm; source $UCVM_INSTALL_PATH/conf/ucvm_env.sh; ./.github/scripts/uwsfbcvm-test-ucvm.sh)
       shell: bash
 #    - name: Start SSH via Ngrok
 #      if: ${{ success() }}
@@ -66,8 +66,8 @@ jobs:
 #            NGROK_AUTH_TOKEN: ${{ secrets.NGROK_TOKEN }}
 #            NGROK_TIMEOUT: 3000
 #            SSH_PASS: ${{ secrets.NGROK_SECRET }}
-    - name: test uwsfcvm under ucvm
-      run: (cd $RUNNER_WORKSPACE/uwsfcvm/ucvm; source $UCVM_INSTALL_PATH/conf/ucvm_env.sh; ./.github/scripts/ucvm-test.sh)
+    - name: test uwsfbcvm under ucvm
+      run: (cd $RUNNER_WORKSPACE/uwsfbcvm/ucvm; source $UCVM_INSTALL_PATH/conf/ucvm_env.sh; ./.github/scripts/ucvm-test.sh)
       shell: bash
 
 

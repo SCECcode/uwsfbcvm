@@ -1,11 +1,11 @@
-name: uwsfcvm-ci
+name: uwsfbcvm-ci
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  uwsfcvm-build-standalone-linux:
+  uwsfbcvm-build-standalone-linux:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -15,15 +15,15 @@ jobs:
       run: echo "UCVM_SRC_PATH=$RUNNER_WORKSPACE/ucvm" >> $GITHUB_ENV
     - name: set UCVM_INSTALL_PATH 
       run: echo "UCVM_INSTALL_PATH=$RUNNER_WORKSPACE/target" >> $GITHUB_ENV
-    - name: checkout uwsfcvm main
+    - name: checkout uwsfbcvm main
       uses: actions/checkout@v2
       with: 
         ref: main 
-    - name: build uwsfcvm
-      run: ./.github/scripts/uwsfcvm-build.sh
+    - name: build uwsfbcvm
+      run: ./.github/scripts/uwsfbcvm-build.sh
       shell: bash
-    - name: test uwsfcvm standalone
-      run: ./.github/scripts/uwsfcvm-test-standalone.sh
+    - name: test uwsfbcvm standalone
+      run: ./.github/scripts/uwsfbcvm-test-standalone.sh
       shell: bash
 #    - name: Start SSH via Ngrok
 #      if: ${{ success() }}
