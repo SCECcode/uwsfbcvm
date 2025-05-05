@@ -2,7 +2,7 @@ name: uwsfcvm-ci
 
 on:
   push:
-    branches: [ foo ]
+    branches: [ main ]
 
 jobs:
   uwsfcvm-build-standalone-linux:
