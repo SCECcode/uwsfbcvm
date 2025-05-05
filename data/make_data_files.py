@@ -123,12 +123,12 @@ def main():
     print("\nDownloading model file\n")
 
 #    fname="./"+"SFB_Vp_Model0.txt"
-    fname="./"+"Vs_model_i0.txt");
+    fname="./"+"Vs_model_i0.txt";
     url = path + "/" + fname
-#    download_urlfile(url,fname)
-    fname="./"+"Vp_model_i0.txt");
+    download_urlfile(url,fname)
+    fname="./"+"Vp_model_i0.txt";
     url = path + "/" + fname
-#    download_urlfile(url,fname)
+    download_urlfile(url,fname)
 
     subprocess.check_call(["mkdir", "-p", mdir])
 

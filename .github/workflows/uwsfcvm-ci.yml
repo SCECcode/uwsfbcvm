@@ -1,0 +1,35 @@
+name: uwsfcvm-ci
+
+on:
+  push:
+    branches: [ foo ]
+
+jobs:
+  uwsfcvm-build-standalone-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+    steps:
+    - name: set UCVM_SRC_PATH 
+      run: echo "UCVM_SRC_PATH=$RUNNER_WORKSPACE/ucvm" >> $GITHUB_ENV
+    - name: set UCVM_INSTALL_PATH 
+      run: echo "UCVM_INSTALL_PATH=$RUNNER_WORKSPACE/target" >> $GITHUB_ENV
+    - name: checkout uwsfcvm main
+      uses: actions/checkout@v2
+      with: 
+        ref: main 
+    - name: build uwsfcvm
+      run: ./.github/scripts/uwsfcvm-build.sh
+      shell: bash
+    - name: test uwsfcvm standalone
+      run: ./.github/scripts/uwsfcvm-test-standalone.sh
+      shell: bash
+#    - name: Start SSH via Ngrok
+#      if: ${{ success() }}
+#      uses: luchihoratiu/debug-via-ssh@main
+#      with:
+#            NGROK_AUTH_TOKEN: ${{ secrets.NGROK_TOKEN }}
+#            NGROK_TIMEOUT: 3000
+#            SSH_PASS: ${{ secrets.NGROK_SECRET }}
+

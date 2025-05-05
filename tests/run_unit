@@ -6,4 +6,5 @@ if [[ -z "${UCVM_INSTALL_PATH}" ]]; then
     exit
   fi
 fi
+
 env DYLD_LIBRARY_PATH=../src ./test_uwsfbcvm

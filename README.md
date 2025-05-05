@@ -1,6 +1,8 @@
 # UW San Francisco Bay Community Velocity Model
 
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![uwsfcvm-ucvm-ci Actions Status](https://github.com/SCECcode/wfcvm/workflows/uwsfcvm-ucvm-ci/badge.svg)](https://github.com/SCECcode/uwsfcvm/actions)
+[![uwsfcvm-ci Actions Status](https://github.com/SCECcode/wfcvm/workflows/uwsfcvm-ci/badge.svg)](https://github.com/SCECcode/uwsfcvm/actions)
 
 The uwsfbcvm velocity model describes 3D seismic P- and S-wave velocities from a
 tomographic inversion for crustal structure in the San Francisco Bay region. The

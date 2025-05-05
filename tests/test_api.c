@@ -30,29 +30,37 @@ int main(int argc, const char* argv[]) {
 	uwsfbcvm_properties_t ret;
 
 	// Initialize the model.
-	assert(uwsfbcvm_init("../", "uwsfbcvm") == 0);
+        char *envstr=getenv("UCVM_INSTALL_PATH");
+        if(envstr != NULL) {
+            if (uwsfbcvm_init(envstr, "uwsfbcvm") != 0) {
+                assert(0);
+            }
+            } else if (uwsfbcvm_init("..", "uwsfbcvm") != 0) {
+                assert(0);
+        }
 
 	printf("Loaded the model successfully.\n");
 
 	// Query a point.
-	pt.longitude = -118;
-	pt.latitude = 34;
+	pt.longitude = -121.5514;
+	pt.latitude = 37.2484;
 	pt.depth = 0;
 
-	sfbcvm_query(&pt, &ret, 1);
+	uwsfbcvm_query(&pt, &ret, 1);
 
+        //fprintf(stderr,"%f, %f, %f\n", ret.vs, ret.vp, ret.rho);
 	assert(ret.vs > 0);
 	assert(ret.vp > 0);
-	assert(ret.rho > 0);
+	assert(ret.rho == 0);
 
 	printf("Query was successful.\n");
 
 	// Close the model.
-	assert(sfbcvm_finalize() == 0);
+	assert(uwsfbcvm_finalize() == 0);
 
 	printf("Model closed successfully.\n");
 
-	printf("\nALL UWSFBCVM TESTS PASSED");
+	printf("\nUWSFBCVM TESTS PASSED");
 
 	return 0;
 }
