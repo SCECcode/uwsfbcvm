@@ -60,7 +60,7 @@ int main(int argc, const char* argv[]) {
 
 	printf("Model closed successfully.\n");
 
-	printf("\nUWSFBCVM TESTS PASSED");
+	printf("\nALL UWSFBCVM TESTS PASSED\n");
 
 	return 0;
 }
