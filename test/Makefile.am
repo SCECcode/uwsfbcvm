@@ -17,8 +17,8 @@ all: $(bin_PROGRAMS)
 # Executables
 ############################################
 install:
-	mkdir -p ${prefix}/tests
-	cp test_uwsfbcvm ${prefix}/tests
+	mkdir -p ${prefix}/test
+	cp test_uwsfbcvm ${prefix}/test
 
 test_uwsfbcvm: $(objects)
 	$(CC) -o $@ $^ $(AM_LDFLAGS) 
