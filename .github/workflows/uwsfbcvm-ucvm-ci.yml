@@ -50,7 +50,7 @@ jobs:
       run: (mv uwsfbcvm $RUNNER_WORKSPACE/uwsfbcvm/ucvm/work/model; pwd; ls)
       shell: bash
     - name: build uwsfbcvm as part of ucvm 
-      run: (cd $RUNNER_WORKSPACE/uwsfbcvm/ucvm/work/model/uwsfbcvm; source $UCVM_INSTALL_PATH/conf/ucvm_env.sh; ./.github/scripts/uwsfbcvm-build.sh)
+      run: (cd $RUNNER_WORKSPACE/uwsfbcvm/ucvm/work/model/uwsfbcvm; ./.github/scripts/uwsfbcvm-build.sh)
       shell: bash
 ### check ucvm is still valid
     - name: check on ucvm
