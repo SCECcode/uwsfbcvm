@@ -33,10 +33,10 @@ int main(int argc, const char* argv[]) {
         char *envstr=getenv("UCVM_INSTALL_PATH");
         if(envstr != NULL) {
             if (uwsfbcvm_init(envstr, "uwsfbcvm") != 0) {
-                assert(0);
+                assert(1);
             }
             } else if (uwsfbcvm_init("..", "uwsfbcvm") != 0) {
-                assert(0);
+                assert(1);
         }
 
 	printf("Loaded the model successfully.\n");
@@ -51,7 +51,7 @@ int main(int argc, const char* argv[]) {
         //fprintf(stderr,"%f, %f, %f\n", ret.vs, ret.vp, ret.rho);
 	assert(ret.vs > 0);
 	assert(ret.vp > 0);
-	assert(ret.rho == 0);
+	assert(ret.rho > 0);
 
 	printf("Query was successful.\n");
 

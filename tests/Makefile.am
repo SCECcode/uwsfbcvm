@@ -9,8 +9,13 @@ AM_LDFLAGS = ${LDFLAGS} -L../src -luwsfbcvm -lm
 objects = test_api.o
 TARGETS = $(bin_PROGRAMS)
 
+.PHONY = run_unit
+
 all: $(bin_PROGRAMS)
 
+############################################
+# Executables
+############################################
 install:
 	mkdir -p ${prefix}/tests
 	cp test_uwsfbcvm ${prefix}/tests
