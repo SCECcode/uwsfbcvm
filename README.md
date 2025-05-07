@@ -24,7 +24,6 @@ you will also have a ./lib/libsfbcvm.so file that can be used
 for dynamic linking. The header file defining the API is located
 in ./include/sfbcvm.h.
 
-
 ## Contact the authors
 
 If you would like to contact the authors regarding this software,
@@ -41,7 +40,9 @@ A right rectangle, no rotation
 Density is calculated, from https://pubs.usgs.gov/of/2005/1317/of2005-1317.pdf
 
 <pre>
+
   *[eqn. 6] r (g/cm3) = 1.6612Vp – 0.4721Vp2 + 0.0671Vp3 – 0.0043Vp4 + 0.000106Vp5
+
 </pre>
 
 
