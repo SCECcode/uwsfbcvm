@@ -49,13 +49,13 @@ jobs:
     - name: move it to the right location
       run: (mv uwsfbcvm $RUNNER_WORKSPACE/uwsfbcvm/ucvm/work/model; pwd; ls)
       shell: bash
-    - name: Start SSH via Ngrok
-      if: ${{ success() }}
-      uses: luchihoratiu/debug-via-ssh@main
-      with:
-            NGROK_AUTH_TOKEN: ${{ secrets.NGROK_TOKEN }}
-            NGROK_TIMEOUT: 3000
-            SSH_PASS: ${{ secrets.NGROK_SECRET }}
+#   - name: Start SSH via Ngrok
+#     if: ${{ success() }}
+#     uses: luchihoratiu/debug-via-ssh@main
+#     with:
+#           NGROK_AUTH_TOKEN: ${{ secrets.NGROK_TOKEN }}
+#           NGROK_TIMEOUT: 3000
+#           SSH_PASS: ${{ secrets.NGROK_SECRET }}
     - name: build uwsfbcvm as part of ucvm 
       run: (cd $RUNNER_WORKSPACE/uwsfbcvm/ucvm/work/model/uwsfbcvm; source $UCVM_INSTALL_PATH/conf/ucvm_env.sh; ./.github/scripts/uwsfbcvm-build.sh)
       shell: bash
