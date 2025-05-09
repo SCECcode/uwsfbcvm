@@ -20,8 +20,10 @@ import struct
 import array
 
 if sys.version_info.major >= (3) :
+  print("\nUWSFBCVM,--- USING urllib.request\n")
   from urllib.request import urlopen
 else:
+  print("\nUWSFBCVM,--- USING urllib2\n")
   from urllib2 import urlopen
 
 ##import osr
@@ -60,6 +62,7 @@ def usage():
     sys.exit(0)
 
 def download_urlfile(url,fname):
+  print("\nUWSFBCVM,--- downloading... \n",url)
   try:
     response = urlopen(url)
     CHUNK = 16 * 1024
