@@ -14,8 +14,8 @@ locations.
 
 ## Installation
 
-This package is intended to be installed as part of the UCVM framework
-version 25.7 or higher.
+This package is intended to be installed as part of the UCVM framework version 
+25.7 or higher.
 
 ## Library
 
