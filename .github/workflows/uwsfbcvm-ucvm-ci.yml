@@ -23,18 +23,12 @@ jobs:
         ref: testMei
         path: ucvm
     - name: build-ucvm
+      id: build-ucvm
       uses: ./ucvm/.github/actions/build-ucvm-action
       with:
          initiating-repo: 'uwsfbcvm'
          target-model: 'uwsfbcvm'
          target-branch: 'testMei'
-#   - name: Start SSH via Ngrok
-#     if: ${{ success() }}
-#     uses: luchihoratiu/debug-via-ssh@main
-#     with:
-#           NGROK_AUTH_TOKEN: ${{ secrets.NGROK_TOKEN }}
-#           NGROK_TIMEOUT: 3000
-#           SSH_PASS: ${{ secrets.NGROK_SECRET }}
     - name: get-result
       run: more ${{ steps.build-ucvm.outputs.build-log }}
       shell: bash
@@ -49,16 +43,15 @@ jobs:
     - name: move it to the right location
       run: (mv uwsfbcvm $RUNNER_WORKSPACE/uwsfbcvm/ucvm/work/model; pwd; ls)
       shell: bash
-#   - name: Start SSH via Ngrok
-#     if: ${{ success() }}
-#     uses: luchihoratiu/debug-via-ssh@main
-#     with:
-#           NGROK_AUTH_TOKEN: ${{ secrets.NGROK_TOKEN }}
-#           NGROK_TIMEOUT: 3000
-#           SSH_PASS: ${{ secrets.NGROK_SECRET }}
     - name: build uwsfbcvm as part of ucvm 
       run: (cd $RUNNER_WORKSPACE/uwsfbcvm/ucvm/work/model/uwsfbcvm; source $UCVM_INSTALL_PATH/conf/ucvm_env.sh; ./.github/scripts/uwsfbcvm-build.sh)
       shell: bash
+#   - name: Start SSH debug with tmate
+#     uses: mxschmitt/action-tmate@v3
+#     with:
+#       limit-access-to-actor: true
+#   - name: sleep to keep runner alive
+#     run: sleep 3600
 ### check ucvm is still valid
     - name: check on ucvm
       run: (source $UCVM_INSTALL_PATH/conf/ucvm_env.sh; ucvm_query -H)
