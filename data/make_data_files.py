@@ -18,12 +18,12 @@ import sys
 import subprocess
 import struct
 import array
+import ssl
+import certifi
 
 if sys.version_info.major >= (3) :
-  print("\nUWSFBCVM,--- USING urllib.request\n")
   from urllib.request import urlopen
 else:
-  print("\nUWSFBCVM,--- USING urllib2\n")
   from urllib2 import urlopen
 
 ##import osr
@@ -78,6 +78,23 @@ def download_urlfile(url,fname):
     raise
   return True
 
+def download_urlfile2(url, fname):
+    print("\ndata file:", url, "\n")
+    try:
+        context = ssl.create_default_context(cafile=certifi.where())
+        response = urlopen(url, context=context)
+        CHUNK = 16 * 1024
+        with open(fname, 'wb') as f:
+            while True:
+                chunk = response.read(CHUNK)
+                if not chunk:
+                  break
+                f.write(chunk)
+    except Exception as e:
+        print("Exception retrieving and saving model datafiles:", e)
+        raise
+    return True
+
 def main():
 
     # Set our variable defaults.
@@ -128,10 +145,10 @@ def main():
 #    fname="./"+"SFB_Vp_Model0.txt"
     fname="./"+"Vs_model_i0.txt";
     url = path + "/" + fname
-    download_urlfile(url,fname)
+    download_urlfile2(url,fname)
     fname="./"+"Vp_model_i0.txt";
     url = path + "/" + fname
-    download_urlfile(url,fname)
+    download_urlfile2(url,fname)
 
     subprocess.check_call(["mkdir", "-p", mdir])
 
