@@ -117,6 +117,7 @@ jobs:
     - name: test uwsfbcvm with ucvm
       run: (cd $RUNNER_WORKSPACE/uwsfbcvm/ucvm/work/model/uwsfbcvm; source $UCVM_INSTALL_PATH/conf/ucvm_env.sh; ./.github/scripts/uwsfbcvm-test-ucvm.sh)
       shell: bash
+    - name: test uwsfbcvm under ucvm
       run: (cd $RUNNER_WORKSPACE/uwsfbcvm/ucvm; source $UCVM_INSTALL_PATH/conf/ucvm_env.sh; ./.github/scripts/ucvm-test.sh)
       shell: bash
 
