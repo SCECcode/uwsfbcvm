@@ -59,16 +59,65 @@ jobs:
     - name: test uwsfbcvm with ucvm
       run: (cd $RUNNER_WORKSPACE/uwsfbcvm/ucvm/work/model/uwsfbcvm; source $UCVM_INSTALL_PATH/conf/ucvm_env.sh; ./.github/scripts/uwsfbcvm-test-ucvm.sh)
       shell: bash
-#    - name: Start SSH via Ngrok
-#      if: ${{ success() }}
-#      uses: luchihoratiu/debug-via-ssh@main
-#      with:
-#            NGROK_AUTH_TOKEN: ${{ secrets.NGROK_TOKEN }}
-#            NGROK_TIMEOUT: 3000
-#            SSH_PASS: ${{ secrets.NGROK_SECRET }}
     - name: test uwsfbcvm under ucvm
       run: (cd $RUNNER_WORKSPACE/uwsfbcvm/ucvm; source $UCVM_INSTALL_PATH/conf/ucvm_env.sh; ./.github/scripts/ucvm-test.sh)
       shell: bash
 
+  uwsfbcvm-build-ucvm-mac:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+    steps:
+    - name: set UCVM_SRC_PATH 
+      run: echo "UCVM_SRC_PATH=$RUNNER_WORKSPACE/uwsfbcvm/ucvm" >> $GITHUB_ENV
+    - name: set UCVM_INSTALL_PATH 
+      run: echo "UCVM_INSTALL_PATH=$RUNNER_WORKSPACE/uwsfbcvm/target" >> $GITHUB_ENV
+### build ucvm(main) first 
+    - name: get-ucvm 
+      uses: actions/checkout@v2
+      with: 
+        repository: 'SCECcode/UCVM'
+        ref: testMei
+        path: ucvm
+    - name: build-ucvm
+      id: build-ucvm
+      uses: ./ucvm/.github/actions/build-ucvm-action
+      with:
+         initiating-repo: 'uwsfbcvm'
+         target-model: 'uwsfbcvm'
+         target-branch: 'testMei'
+    - name: get-result
+      run: more ${{ steps.build-ucvm.outputs.build-log }}
+      shell: bash
+    - name: move stock uwsfbcvm away
+      run: (rm -rf $RUNNER_WORKSPACE/uwsfbcvm/ucvm/work/model/uwsfbcvm)
+      shell: bash
+### build uwsfbcvm from github 
+    - name: checkout uwsfbcvm main
+      uses: actions/checkout@v2
+      with: 
+        path: uwsfbcvm
+    - name: move it to the right location
+      run: (mv uwsfbcvm $RUNNER_WORKSPACE/uwsfbcvm/ucvm/work/model; pwd; ls)
+      shell: bash
+    - name: build uwsfbcvm as part of ucvm 
+      run: (cd $RUNNER_WORKSPACE/uwsfbcvm/ucvm/work/model/uwsfbcvm; source $UCVM_INSTALL_PATH/conf/ucvm_env.sh; ./.github/scripts/uwsfbcvm-build.sh)
+      shell: bash
+#   - name: Start SSH debug with tmate
+#     uses: mxschmitt/action-tmate@v3
+#     with:
+#       limit-access-to-actor: true
+#   - name: sleep to keep runner alive
+#     run: sleep 3600
+### check ucvm is still valid
+    - name: check on ucvm
+      run: (source $UCVM_INSTALL_PATH/conf/ucvm_env.sh; ucvm_query -H)
+      shell: bash
+    - name: test uwsfbcvm with ucvm
+      run: (cd $RUNNER_WORKSPACE/uwsfbcvm/ucvm/work/model/uwsfbcvm; source $UCVM_INSTALL_PATH/conf/ucvm_env.sh; ./.github/scripts/uwsfbcvm-test-ucvm.sh)
+      shell: bash
+      run: (cd $RUNNER_WORKSPACE/uwsfbcvm/ucvm; source $UCVM_INSTALL_PATH/conf/ucvm_env.sh; ./.github/scripts/ucvm-test.sh)
+      shell: bash
 
 
