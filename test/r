@@ -1,2 +1,0 @@
-
-gcc -o test_uwsfbcvm test_api.o ../src/libuwsfbcvm.a -lm 

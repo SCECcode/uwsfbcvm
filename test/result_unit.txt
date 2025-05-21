@@ -1,3 +1,0 @@
-./test_uwsfbcvm
-test_uwsfbcvm: test_api.c:54: main: Assertion `ret.rho == 0' failed.
-make: *** [run_unit] Aborted
