@@ -1,5 +1,7 @@
 # UW San Francisco Bay Community Velocity Model
 
+<a href="https://github.com/sceccode/uwsfbcvm.git"><img src="https://github.com/sceccode/uwsfbcvm/wiki/images/uwsfbcvm_logo.png"></a>
+
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 ![GitHub repo size](https://img.shields.io/github/repo-size/sceccode/uwsfbcvm)
 [![uwsfbcvm-ucvm-ci Actions Status](https://github.com/SCECcode/uwsfbcvm/workflows/uwsfbcvm-ucvm-ci/badge.svg)](https://github.com/SCECcode/uwsfbcvm/actions)
