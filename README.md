@@ -13,6 +13,7 @@ inverts both body-wave arrival times and surface-wave dispersion measurements
 for 3D P- and S-wave velocity structure simultaneously with determining earthquake
 locations.
 
+Guo, H., T. Taira, A. Nayak, C. H. Thurber, and E. Hirakawa, Three-dimensional seismic velocity models for the San Francisco Bay region, California from joint body-wave and surface-wave tomography validated by waveform simulation, J. Geophys. Res. Solid Earth, submitted
 
 ## Installation
 
